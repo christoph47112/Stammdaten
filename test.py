@@ -15,7 +15,7 @@ def load_stammdaten():
         response.raise_for_status()  # Fehler auslösen, wenn Download fehlschlägt
         with open("stammdaten.xlsx", "wb") as file:
             file.write(response.content)  # Speichert die Datei lokal
-        st.success("Stammdaten erfolgreich aus GitHub geladen.")
+        st.success("Die Stammdaten-Datei wurde erfolgreich integriert. Sie müssen nur die Markt Daten hochladen.")
     except requests.exceptions.RequestException as e:
         st.error("Fehler beim Laden der Stammdaten. Bitte überprüfen Sie den Repository-Link.")
         raise e
@@ -59,7 +59,7 @@ def process_files(umsatz_file, stammdaten_data, output_file):
 # Streamlit App
 st.title("Prüfung Kern- und Discount- Sortiment")
 
-st.write("⚠️ Dieses Modul speichert **keine Daten**. Es wurde von Christoph R. Kaiser entwickelt, unterstützt durch modernste künstliche Intelligenz-Technologie. 🚀")
+st.write("Bitte laden Sie die Markt Daten hoch. Die Stammdaten-Datei ist bereits integriert.")
 
 umsatz_file = st.file_uploader("Markt Daten hochladen (Excel)", type=["xlsx"])
 
@@ -81,3 +81,9 @@ if st.button("Verarbeiten"):
             st.error(str(e))
     else:
         st.error("Bitte laden Sie die Markt Daten-Datei hoch!")
+
+# Hinweise
+st.markdown("---")
+st.markdown("### Hinweise")
+st.markdown("**Datenschutz:** Diese Anwendung speichert keine Daten. Alle hochgeladenen Dateien werden ausschließlich lokal verarbeitet.")
+st.markdown("**Entwicklung:** Diese Anwendung wurde mithilfe künstlicher Intelligenz erstellt.")
