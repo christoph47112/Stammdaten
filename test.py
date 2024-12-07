@@ -6,15 +6,21 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 import os
 import requests
 
-# Stammdaten lokal oder aus GitHub laden
+# Stammdaten aus GitHub laden
 def load_stammdaten():
-    file_path = "stammdaten.xlsx"  # Lokaler Pfad oder Deployment-Pfad
+    url = "https://raw.githubusercontent.com/christoph47112/Stammdaten/main/Stammdaten.xlsx"  # URL der Datei im GitHub-Repository
 
-    if not os.path.exists(file_path):
-        st.error("Die Datei 'stammdaten.xlsx' konnte nicht gefunden werden. Bitte stellen Sie sicher, dass sie im gleichen Verzeichnis wie diese Anwendung liegt.")
-        raise FileNotFoundError("Stammdaten.xlsx nicht gefunden")
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Fehler auslösen, wenn Download fehlschlägt
+        with open("stammdaten.xlsx", "wb") as file:
+            file.write(response.content)  # Speichert die Datei lokal
+        st.success("Stammdaten erfolgreich aus GitHub geladen.")
+    except requests.exceptions.RequestException as e:
+        st.error("Fehler beim Laden der Stammdaten. Bitte überprüfen Sie den Repository-Link.")
+        raise e
 
-    stammdaten_data = pd.read_excel(file_path)
+    stammdaten_data = pd.read_excel("stammdaten.xlsx")
     return stammdaten_data
 
 def process_files(umsatz_file, stammdaten_data, output_file):
