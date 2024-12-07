@@ -64,27 +64,31 @@ st.title("Prüfung Kern- und Discount- Sortiment")
 st.write("Bitte laden Sie die Markt Daten hoch. Die Stammdaten-Datei ist bereits integriert.")
 
 umsatz_file = st.file_uploader("Markt Daten hochladen (Excel)", type=["xlsx"])
-if umsatz_file is not None:
-    try:
-        stammdaten_data = load_stammdaten()
-        output_file = "Artikel_Differenz_Ergebnis.xlsx"
-        artikel_diff_no_displays = process_files(umsatz_file, stammdaten_data, output_file)
+show_preview = st.checkbox("Ergebnis anzeigen")
 
-        show_preview = st.checkbox("Ergebnis anzeigen", value=False)
-        if show_preview:
-            # Vorschau der gefilterten Daten
-            st.subheader("Vorschau des Ergebnisses:")
-            st.dataframe(artikel_diff_no_displays.head(50))  # Zeigt die ersten 50 Zeilen an
+if st.button("Verarbeiten"):
+    if umsatz_file is not None:
+        try:
+            stammdaten_data = load_stammdaten()
+            output_file = "Artikel_Differenz_Ergebnis.xlsx"
+            artikel_diff_no_displays = process_files(umsatz_file, stammdaten_data, output_file)
 
-        with open(output_file, "rb") as file:
-            st.download_button(
-                label="Ergebnis herunterladen",
-                data=file,
-                file_name=output_file,
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-    except FileNotFoundError as e:
-        st.error(str(e))
+            if show_preview:
+                # Vorschau der gefilterten Daten
+                st.subheader("Vorschau des Ergebnisses:")
+                st.dataframe(artikel_diff_no_displays.head(50))  # Zeigt die ersten 50 Zeilen an
+            
+            with open(output_file, "rb") as file:
+                st.download_button(
+                    label="Ergebnis herunterladen",
+                    data=file,
+                    file_name=output_file,
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+        except FileNotFoundError as e:
+            st.error(str(e))
+    else:
+        st.error("Bitte laden Sie die Markt Daten-Datei hoch!")
 
 # Hinweise
 st.markdown("---")
