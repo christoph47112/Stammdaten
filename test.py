@@ -91,5 +91,5 @@ if st.button("Verarbeiten"):
 # Hinweise
 st.markdown("---")
 st.markdown("### Hinweise")
-st.markdown("**Datenschutz:** Diese Anwendung speichert keine Daten. Alle hochgeladenen Dateien werden ausschließlich lokal verarbeitet.")
-st.markdown("**Entwicklung:** Diese Anwendung wurde mithilfe künstlicher Intelligenz erstellt.")
+st.markdown("**Datenschutz:** Diese Anwendung speichert **keine Daten**. Alle hochgeladenen Dateien werden ausschließlich lokal verarbeitet.")
+st.markdown("**Entwicklung:** Diese Anwendung wurde von Christoph R. Kaiser mithilfe künstlicher Intelligenz erstellt.")
