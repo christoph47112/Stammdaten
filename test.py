@@ -64,6 +64,7 @@ st.title("Prüfung Kern- und Discount- Sortiment")
 st.write("Bitte laden Sie die Markt Daten hoch. Die Stammdaten-Datei ist bereits integriert.")
 
 umsatz_file = st.file_uploader("Markt Daten hochladen (Excel)", type=["xlsx"])
+show_preview = st.checkbox("Ergebnis anzeigen")
 
 if st.button("Verarbeiten"):
     if umsatz_file is not None:
@@ -72,9 +73,10 @@ if st.button("Verarbeiten"):
             output_file = "Artikel_Differenz_Ergebnis.xlsx"
             artikel_diff_no_displays = process_files(umsatz_file, stammdaten_data, output_file)
 
-            # Vorschau der gefilterten Daten
-            st.subheader("Vorschau des Ergebnisses:")
-            st.dataframe(artikel_diff_no_displays.head(50))  # Zeigt die ersten 50 Zeilen an
+            if show_preview:
+                # Vorschau der gefilterten Daten
+                st.subheader("Vorschau des Ergebnisses:")
+                st.dataframe(artikel_diff_no_displays.head(50))  # Zeigt die ersten 50 Zeilen an
             
             with open(output_file, "rb") as file:
                 st.download_button(
