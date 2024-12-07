@@ -3,11 +3,21 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.worksheet.table import Table, TableStyleInfo
+import os
 
-def process_files(umsatz_file, stammdaten_file, output_file):
+# Stammdaten lokal oder aus GitHub laden
+def load_stammdaten():
+    file_path = "stammdaten.xlsx"  # Lokaler Pfad oder Deployment-Pfad
+    if not os.path.exists(file_path):  # Alternative: Direkt aus GitHub laden
+        url = "https://raw.githubusercontent.com/USERNAME/REPO/main/stammdaten.xlsx"  # ANPASSEN mit deinem Repo-Link
+        stammdaten_data = pd.read_excel(url, engine="openpyxl")
+    else:
+        stammdaten_data = pd.read_excel(file_path)
+    return stammdaten_data
+
+def process_files(umsatz_file, stammdaten_data, output_file):
     # Umsatz- und Stammdaten einlesen
     umsatz_data = pd.read_excel(umsatz_file)
-    stammdaten_data = pd.read_excel(stammdaten_file)
 
     # Sicherstellen, dass Artikelnummern als Strings behandelt werden
     umsatz_data['Artikel'] = umsatz_data['Artikel'].astype(str).str.strip()
@@ -35,10 +45,6 @@ def process_files(umsatz_file, stammdaten_file, output_file):
     tab.tableStyleInfo = style
     ws_data.add_table(tab)
 
-    # Pivot-Tabelle vorbereiten
-    ws_pivot = wb.create_sheet(title="Pivot-Tabelle")
-    ws_pivot["A1"] = "Hinweis: Gehe zu 'Daten' und erstelle eine Pivot-Tabelle in Excel."
-
     # Datei speichern
     wb.save(output_file)
 
@@ -48,12 +54,12 @@ st.title("Prüfung Kern- und Discount- Sortiment")
 st.write("⚠️ Dieses Modul speichert **keine Daten**. Es wurde von Christoph R. Kaiser entwickelt, unterstützt durch modernste künstliche Intelligenz-Technologie. 🚀")
 
 umsatz_file = st.file_uploader("Markt Daten hochladen (Excel)", type=["xlsx"])
-stammdaten_file = st.file_uploader("Stammdatendatei hochladen (Excel)", type=["xlsx"])
 
 if st.button("Verarbeiten"):
-    if umsatz_file is not None and stammdaten_file is not None:
+    if umsatz_file is not None:
+        stammdaten_data = load_stammdaten()
         output_file = "Artikel_Differenz_Ergebnis.xlsx"
-        process_files(umsatz_file, stammdaten_file, output_file)
+        process_files(umsatz_file, stammdaten_data, output_file)
         
         with open(output_file, "rb") as file:
             st.download_button(
@@ -63,4 +69,4 @@ if st.button("Verarbeiten"):
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
     else:
-        st.error("Bitte laden Sie beide Dateien hoch!")
+        st.error("Bitte laden Sie die Markt Daten-Datei hoch!")
