@@ -9,18 +9,10 @@ import requests
 # Stammdaten lokal oder aus GitHub laden
 def load_stammdaten():
     file_path = "stammdaten.xlsx"  # Lokaler Pfad oder Deployment-Pfad
-    url = "https://raw.githubusercontent.com/USERNAME/REPO/main/stammdaten.xlsx"  # ANPASSEN mit deinem Repo-Link
 
     if not os.path.exists(file_path):
-        try:
-            response = requests.get(url)
-            response.raise_for_status()  # Fehler auslösen, wenn Download fehlschlägt
-            with open(file_path, 'wb') as file:
-                file.write(response.content)
-            st.success("Stammdaten erfolgreich aus dem Repository geladen.")
-        except requests.exceptions.RequestException as e:
-            st.error("Fehler beim Laden der Stammdaten. Bitte überprüfen Sie den Repository-Link.")
-            raise e
+        st.error("Die Datei 'stammdaten.xlsx' konnte nicht gefunden werden. Bitte stellen Sie sicher, dass sie im gleichen Verzeichnis wie diese Anwendung liegt.")
+        raise FileNotFoundError("Stammdaten.xlsx nicht gefunden")
 
     stammdaten_data = pd.read_excel(file_path)
     return stammdaten_data
@@ -67,16 +59,19 @@ umsatz_file = st.file_uploader("Markt Daten hochladen (Excel)", type=["xlsx"])
 
 if st.button("Verarbeiten"):
     if umsatz_file is not None:
-        stammdaten_data = load_stammdaten()
-        output_file = "Artikel_Differenz_Ergebnis.xlsx"
-        process_files(umsatz_file, stammdaten_data, output_file)
-        
-        with open(output_file, "rb") as file:
-            st.download_button(
-                label="Ergebnis herunterladen",
-                data=file,
-                file_name=output_file,
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
+        try:
+            stammdaten_data = load_stammdaten()
+            output_file = "Artikel_Differenz_Ergebnis.xlsx"
+            process_files(umsatz_file, stammdaten_data, output_file)
+            
+            with open(output_file, "rb") as file:
+                st.download_button(
+                    label="Ergebnis herunterladen",
+                    data=file,
+                    file_name=output_file,
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+        except FileNotFoundError as e:
+            st.error(str(e))
     else:
         st.error("Bitte laden Sie die Markt Daten-Datei hoch!")
