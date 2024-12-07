@@ -43,11 +43,11 @@ def process_files(umsatz_file, stammdaten_file, output_file):
     wb.save(output_file)
 
 # Streamlit App
-st.title("Artikel-Differenzfilter")
+st.title("Prüfung Kern- und Discount- Sortiment")
 
-st.write("Laden Sie Ihre Dateien hoch, um die Differenz der Artikel zu berechnen und Displays zu entfernen.")
+st.write("⚠️ Dieses Modul speichert **keine Daten**. Es wurde von Christoph R. Kaiser entwickelt, unterstützt durch modernste künstliche Intelligenz-Technologie. 🚀")
 
-umsatz_file = st.file_uploader("Umsatzdatei hochladen (Excel)", type=["xlsx"])
+umsatz_file = st.file_uploader("Markt Daten hochladen (Excel)", type=["xlsx"])
 stammdaten_file = st.file_uploader("Stammdatendatei hochladen (Excel)", type=["xlsx"])
 
 if st.button("Verarbeiten"):
