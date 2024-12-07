@@ -56,6 +56,8 @@ def process_files(umsatz_file, stammdaten_data, output_file):
     # Datei speichern
     wb.save(output_file)
 
+    return artikel_diff_no_displays
+
 # Streamlit App
 st.title("Prüfung Kern- und Discount- Sortiment")
 
@@ -68,7 +70,11 @@ if st.button("Verarbeiten"):
         try:
             stammdaten_data = load_stammdaten()
             output_file = "Artikel_Differenz_Ergebnis.xlsx"
-            process_files(umsatz_file, stammdaten_data, output_file)
+            artikel_diff_no_displays = process_files(umsatz_file, stammdaten_data, output_file)
+
+            # Vorschau der gefilterten Daten
+            st.subheader("Vorschau des Ergebnisses:")
+            st.dataframe(artikel_diff_no_displays.head(50))  # Zeigt die ersten 50 Zeilen an
             
             with open(output_file, "rb") as file:
                 st.download_button(
